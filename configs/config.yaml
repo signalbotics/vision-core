@@ -1,0 +1,28 @@
+general:
+  log_level: "INFO"  # Set to "DEBUG" to enable debug logging
+  video_path: "data/test.mp4" # Path to the video file here a relative or absolute path can be used
+detect:
+  device: "CUDA"  # Set to "CPU" to use CPU, "CUDA" to use GPU this is for opencv dnn
+  use_rendering_thread: true  # Set to true to use a separate rendering thread
+  use_inference_thread: true  # Set to true to use a separate inference thread
+  renderer: "OPENGL"  # Set to "OPENCV" to use OpenCV, "OPENGL" to use OpenGL
+  use_openvino: false  # Set to true to use OpenVINO, false to use OpenCV DNN
+  use_tensorrt: false  # Set to true to use TensorRT, false to use OpenCV DNN
+  model:
+    config: "model/yolov3.cfg" # YOLOv3 model configuration file
+    weights: "model/yolov3.weights" # YOLOv3 model weights file
+    onnx_model_path: "model/yolov8s.trt" # YOLOv3 ONNX model file
+    classes: "model/coco_classes.txt" # COCO classes file
+    colors: "model/coco_colors.txt" # COCO colors file
+    confidence_threshold: 0.5 # Confidence threshold for object detection
+    nms_threshold: 0.4 # Non-maximum suppression threshold for object detection
+    openvino_device: "CPU"  # Specify the OpenVINO device (e.g., CPU, GPU)
+    openvino_model_xml: "model/yolo-v3.xml"  # OpenVINO model XML file
+    openvino_model_bin: "model/yolo-v3.bin"  # OpenVINO model BIN file
+
+segment:
+  model:
+    model_path: "model/sam.onnx"
+    input_size: 256
+    output_size: 256
+

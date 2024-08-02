@@ -1,0 +1,136 @@
+# YOLO Detector
+
+## Overview
+This project implements a YOLO object detection system with support for different inference engines such as OpenCV, OpenVINO, and TensorRT. The project uses threading and OpenGL rendering to optimize performance and allow flexible, real-time display of detection results.
+
+### Features:
+- **Inference engines**: OpenCV, OpenVINO, and TensorRT supported using inheritance to streamline code architecture.
+- **Threading**: Separate threads for rendering and inference, with an option to enable or disable threading.
+- **Rendering**: OpenGL-based rendering, with an option to switch between OpenCV and OpenGL rendering.
+- **Non-Maximum Suppression (NMS)**: Applied across all inference methods to filter out overlapping boxes.
+
+## Tasks Completed
+- [x] **Implemented YOLO object detection with support for OpenCV, OpenVINO, and TensorRT** using a class-based architecture with inheritance.
+- [x] **Threading**: Enabled multithreading for both rendering and inference. Threads can be toggled via configuration.
+- [x] **OpenGL rendering**: Implemented and integrated OpenGL-based rendering, with a fallback to OpenCV if OpenGL is not desired.
+- [x] **Inference Engines**: Optimized detection using OpenVINO and TensorRT, Here only basic functions are implemented. Output is not tested.
+- [x] **NMS (Non-Maximum Suppression)**: Integrated NMS to remove redundant overlapping boxes from detection outputs.
+
+## Installation
+### Prerequisites
+- OpenCV
+- OpenVINO(optional)
+- TensorRT(optional)
+- OpenGL(optional)
+
+#### 1. Install OpenCV
+You can install OpenCV via `apt` or build it from source. For simplicity, here is how to install it via `apt`:
+
+```bash
+sudo apt-get update
+sudo apt-get install libopencv-dev
+```
+
+Alternatively, to build from source, follow the instructions here: [OpenCV Installation](https://docs.opencv.org/master/d7/d9f/tutorial_linux_install.html). Tested with OpenCV 4.9.0.
+
+#### 2. Install OpenVINO (Optional)
+To use OpenVINO for inference, you need to install it. Follow the installation guide provided by Intel:
+- [OpenVINO Installation Guide](https://docs.openvino.ai/2024/get-started/install-openvino.html?PACKAGE=OPENVINO_BASE&VERSION=v_2024_3_0&OP_SYSTEM=LINUX&DISTRIBUTION=APT)
+
+- model hast to be converted to IR format.
+
+#### 3. Install TensorRT (Optional)
+To use TensorRT for inference, you need to install it. Follow the installation guide provided by NVIDIA:
+- [TensorRT Installation Guide](https://docs.nvidia.com/deeplearning/tensorrt/install-guide/index.html)
+
+- model hast to be converted to trt engine file from onnx file using trtexec command or by completly implemnting the buildEngine function provided
+
+#### 3. Build the Project
+
+```bash
+mkdir build
+cd build
+cmake -DWITH_OPENVINO=OFF -DWITH_OPENGL=OFF -DWITH_TENSORRT=OFF ..
+make
+```
+### Running the Application
+
+#### 1. Prepare the Configuration File
+
+Ensure that your `config.yaml` is correctly set up. located in the `config` directory. 
+
+#### 2. Prepare the Model Files
+
+Ensure that the model files are correctly set up. The default model files are located in the `models` directory. The model files should be in the following format:
+
+To use with OpenCV DNN, the model files are:
+- `yolov3.cfg`: YOLOv3 model configuration file.
+- `yolov3.wts`: YOLOv3 model weights file.
+- `coco_classes.txt`: COCO class names file.
+- `coco_colors.txt`: COCO class colors file.
+
+To use with OpenVINO, the model files are:
+- `yolov3.xml`: YOLOv3 model XML file.
+- `yolov3.bin`: YOLOv3 model BIN file.
+- `coco_classes.txt`: COCO class names file.
+- `coco_colors.txt`: COCO class colors file.
+
+To use with TensorRT, the model files are converted to the following format:
+- `yolov3.engine`: YOLOv3 model engine file. or onnx file
+- `coco_classes.txt`: COCO class names file.
+- `coco_colors.txt`: COCO class colors file.
+the model file to use with opencv dnn is 
+#### 3. Run the Application
+
+instead of just taking video as input as intended in the task I have modified the code to take config file as input.
+
+```bash
+./build/detection_app ./config/config.yaml
+```
+
+## Configuration
+The application uses a configuration file to set up the application. The configuration file is in YAML format and is located in the `config` directory. The configuration file contains the following parameters:
+
+```yaml
+# Configuration file for YOLO Detector
+video_path: "data/test.mp4" # Path to the video file here a relative or absolute path can be used
+device: "CUDA"  # Set to "CPU" to use CPU, "CUDA" to use GPU this is for opencv dnn
+use_rendering_thread: true  # Set to true to use a separate rendering thread
+use_inference_thread: true  # Set to true to use a separate inference thread
+renderer: "OPENCL"  # Set to "OPENCV" to use OpenCV, "OPENGL" to use OpenGL
+use_openvino: false  # Set to true to use OpenVINO, false to use OpenCV DNN
+use_tensorrt: false  # Set to true to use TensorRT, false to use OpenCV DNN
+model:
+  config: "model/yolov3.cfg" # YOLOv3 model configuration file
+  weights: "model/yolov3.weights" # YOLOv3 model weights file
+  onnx_model_path: "model/yolov8s.trt" # YOLOv3 ONNX model file
+  classes: "model/coco_classes.txt" # COCO classes file
+  colors: "model/coco_colors.txt" # COCO colors file
+  confidence_threshold: 0.5 # Confidence threshold for object detection
+  nms_threshold: 0.4 # Non-maximum suppression threshold for object detection
+  openvino_device: "CPU"  # Specify the OpenVINO device (e.g., CPU, GPU)
+  openvino_model_xml: "model/yolo-v3.xml"  # OpenVINO model XML file
+  openvino_model_bin: "model/yolo-v3.bin"  # OpenVINO model BIN file
+
+```
+
+## Sample Output Video
+
+[![Inupt frame side by side with output frame](./res/out.mp4)](./res/out.mp4)
+
+
+### Keyboard Shortcuts
+- `ESC`: Exit the application.
+
+## Future Improvements
+- **Model Conversion**: Implement a model conversion script to convert the YOLOv3 model to OpenVINO and TensorRT formats.
+
+
+## References
+- [OpenCV](https://opencv.org/)
+- [OpenVINO](https://software.intel.com/content/www/us/en/develop/tools/openvino-toolkit.html)
+- [TensorRT](https://developer.nvidia.com/tensorrt)
+- [YOLOv3](https://pjreddie.com/darknet/yolo/)
+- [Non-Maximum Suppression](https://www.pyimagesearch.com/2014/11/17/non-maximum-suppression-object-detection-python/)
+- [OpenGL](https://www.opengl.org/)
+
