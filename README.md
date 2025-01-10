@@ -100,14 +100,7 @@ cd /usr/local/vision_core/examples/segmentation
 ./segmentation_demo --input <input_image>
 ```
 
-### Firmware for Nreal Glasses
 
-To update or install firmware on Nreal glasses:
-
-```bash
-cd /usr/local/vision_core/firmware/nreal
-./install_firmware.sh
-```
 
 ## Environment Setup
 
