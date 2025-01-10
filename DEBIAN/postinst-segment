@@ -1,0 +1,26 @@
+#!/bin/bash
+
+# Download segmentation model
+echo "Downloading segmentation model..."
+
+# # Download ONNX model
+# wget -O /usr/local/vision_core/models/segment.onnx "http://packages.signalbotics.com/models/segment.onnx" &> /dev/null || {
+#     echo "Failed to download segmentation model. Installation cannot proceed."
+#     exit 1
+# }
+# echo "Segmentation model downloaded successfully"
+
+# # Convert to TensorRT format
+# echo "Converting segmentation model to TensorRT format..."
+# /usr/src/tensorrt/bin/trtexec --onnx=/usr/local/vision_core/models/segment.onnx \
+#                              --saveEngine=/usr/local/vision_core/models/segment.trt \
+#                              &>> /usr/local/vision_core/logs/trtexec.log || {
+#     echo "Failed to convert segmentation model to TensorRT format."
+#     exit 1
+# }
+# echo "Segmentation model TensorRT conversion successful"
+
+# # Clean up ONNX file
+# rm -f /usr/local/vision_core/models/segment.onnx
+
+exit 0

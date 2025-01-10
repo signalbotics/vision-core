@@ -34,6 +34,16 @@ Welcome to the Vision Core SDK! This SDK provides state-of-the-art libraries for
 
 ### Installing Vision Core SDK
 
+Vision Core SDK is now modular, allowing you to install only the components you need. The following packages are available:
+
+- **vision-core-common**: Common utilities and configurations used by all modules
+- **vision-core-detect**: Object detection module with OpenCV, OpenVINO, and TensorRT backends
+- **vision-core-segment**: High-performance image segmentation module
+- **vision-core-depth**: Depth estimation module (both mono and stereo capabilities)
+- **vision-core**: Meta package that installs all modules
+
+Each module package automatically installs the common package as a dependency.
+
 To install Vision Core SDK via APT, follow these steps:
 
 1. **Add the APT repository**:
@@ -45,8 +55,17 @@ To install Vision Core SDK via APT, follow these steps:
    ```
 
 2. **Install the SDK**:
+
+   Install all modules:
    ```bash
    sudo apt install vision-core
+   ```
+
+   Or install individual modules:
+   ```bash
+   sudo apt install vision-core-detect  # Only object detection
+   sudo apt install vision-core-segment # Only segmentation
+   sudo apt install vision-core-depth   # Only depth estimation
    ```
 
 ## Usage
@@ -123,13 +142,31 @@ To build the Vision Core SDK from source:
 
 3. **Build the SDK**:
 
+   Build all modules:
    ```bash
-   mkdir build
-   cd build
-   cmake ..
-   make
-   sudo make install
+   ./create_pkg.sh --all
    ```
+
+   Or build individual modules:
+   ```bash
+   ./create_pkg.sh --common  # Build common package
+   ./create_pkg.sh --detect  # Build detection module
+   ./create_pkg.sh --segment # Build segmentation module
+   ./create_pkg.sh --depth   # Build depth estimation module
+   ```
+
+   The script will automatically handle package installation in the correct order:
+   ```bash
+   # Build and install all modules
+   ./create_pkg.sh --all
+
+   # Or build and install individual modules
+   ./create_pkg.sh --detect  # Build and install detection module
+   ./create_pkg.sh --segment # Build and install segmentation module
+   ./create_pkg.sh --depth   # Build and install depth estimation module
+   ```
+
+   The common package will be automatically built and installed if needed.
 
 ## Contributing
 

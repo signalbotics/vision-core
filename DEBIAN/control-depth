@@ -1,0 +1,12 @@
+Source: vision-core-depth
+Section: base
+Priority: optional
+Maintainer: Bruk Gebregziabher <bruk@signalbotics.com>
+Build-Depends: debhelper (>= 9), libopencv-dev (>= 4.5), libyaml-cpp-dev
+Standards-Version: 4.5.0 
+Package: vision-core-depth
+Architecture: all
+Version: 1.0
+Depends: vision-core-common (>= 1.0)
+Description: Vision Core Depth Estimation Module
+ Includes both monocular and stereo depth estimation capabilities.

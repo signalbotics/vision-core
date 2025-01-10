@@ -1,0 +1,11 @@
+Source: vision-core-common
+Section: base
+Priority: optional
+Maintainer: Bruk Gebregziabher <bruk@signalbotics.com>
+Build-Depends: debhelper (>= 9)
+Standards-Version: 4.5.0 
+Package: vision-core-common
+Architecture: all
+Version: 1.0
+Description: Vision Core Common Files
+ Common files and configurations shared across Vision Core modules.

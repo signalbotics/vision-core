@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# Create logs directory
+mkdir -p /usr/local/vision_core/logs
+touch /usr/local/vision_core/logs/trtexec.log
+
+exit 0

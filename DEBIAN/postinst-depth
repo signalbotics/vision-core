@@ -1,0 +1,69 @@
+#!/bin/bash
+
+# Download and optimize stereo model
+MODEL_URL="http://packages.signalbotics.com/models/light_480x640.onnx"
+TEMP_MODEL_PATH="/tmp/light_480x640.onnx"
+
+echo "Downloading the stereo model..."
+wget -O "$TEMP_MODEL_PATH" "$MODEL_URL" &> /dev/null || {
+    echo "Failed to download the stereo model. Installation cannot proceed."
+    exit 1
+}
+echo "Stereo model downloaded successfully"
+
+# Download and optimize light mono model
+MODEL_URL="http://packages.signalbotics.com/models/light_mono.onnx"
+TEMP_MODEL_PATH="/tmp/light_mono.onnx"
+
+echo "Downloading the light monocular depth model..."
+wget -O "$TEMP_MODEL_PATH" "$MODEL_URL" &> /dev/null || {
+    echo "Failed to download the light mono model. Installation cannot proceed."
+    exit 1
+}
+echo "Light mono model downloaded successfully"
+
+# Download and optimize medium mono model
+MODEL_URL="http://packages.signalbotics.com/models/medium_mono.onnx"
+TEMP_MODEL_PATH="/tmp/medium_mono.onnx"
+
+echo "Downloading the medium monocular depth model..."
+wget -O "$TEMP_MODEL_PATH" "$MODEL_URL" &> /dev/null || {
+    echo "Failed to download the medium mono model. Installation cannot proceed."
+    exit 1
+}
+echo "Medium mono model downloaded successfully"
+
+# Optimize models for the current architecture
+DEVICE_ARCH=$(uname -m)
+
+echo "Optimizing the stereo model for $DEVICE_ARCH..."
+/usr/src/tensorrt/bin/trtexec --onnx=/tmp/light_480x640.onnx --saveEngine=/usr/local/vision_core/models/light_480x640.engine &>> /usr/local/vision_core/logs/trtexec.log
+if [ $? -eq 0 ]; then
+    echo "Stereo model optimized successfully."
+else
+    echo "Failed to optimize stereo model."
+    exit 1
+fi
+
+echo "Optimizing the light monocular depth model for $DEVICE_ARCH..."
+/usr/src/tensorrt/bin/trtexec --onnx=/tmp/light_mono.onnx --saveEngine=/usr/local/vision_core/models/light_mono.engine &>> /usr/local/vision_core/logs/trtexec.log
+if [ $? -eq 0 ]; then
+    echo "Light mono model optimized successfully."
+else
+    echo "Failed to optimize light mono model."
+    exit 1
+fi
+
+echo "Optimizing the medium monocular depth model for $DEVICE_ARCH..."
+/usr/src/tensorrt/bin/trtexec --onnx=/tmp/medium_mono.onnx --saveEngine=/usr/local/vision_core/models/medium_mono.engine &>> /usr/local/vision_core/logs/trtexec.log
+if [ $? -eq 0 ]; then
+    echo "Medium mono model optimized successfully."
+else
+    echo "Failed to optimize medium mono model."
+    exit 1
+fi
+
+# Clean up temporary files
+rm -f /tmp/light_480x640.onnx /tmp/light_mono.onnx /tmp/medium_mono.onnx
+
+exit 0

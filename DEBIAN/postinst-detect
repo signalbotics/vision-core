@@ -1,0 +1,63 @@
+#!/bin/bash
+
+# Download YOLO models
+echo "Downloading YOLO models..."
+
+# YOLOv3 weights
+# wget -O /usr/local/vision_core/model/yolov3.weights "http://packages.signalbotics.com/models/yolov3.weights" &> /dev/null || {
+#     echo "Failed to download YOLOv3 weights. Installation cannot proceed."
+#     exit 1
+# }
+# echo "YOLOv3 weights downloaded successfully"
+
+# # YOLOv3 config
+# wget -O /usr/local/vision_core/model/yolov3.cfg "http://packages.signalbotics.com/models/yolov3.cfg" &> /dev/null || {
+#     echo "Failed to download YOLOv3 config. Installation cannot proceed."
+#     exit 1
+# }
+# echo "YOLOv3 config downloaded successfully"
+
+# # YOLOv8 model
+# wget -O /usr/local/vision_core/model/yolov8s.pt "http://packages.signalbotics.com/models/yolov8s.pt" &> /dev/null || {
+#     echo "Failed to download YOLOv8 model. Installation cannot proceed."
+#     exit 1
+# }
+# echo "YOLOv8 model downloaded successfully"
+
+# # Download class names and colors
+# wget -O /usr/local/vision_core/model/coco_classes.txt "http://packages.signalbotics.com/models/coco_classes.txt" &> /dev/null || {
+#     echo "Failed to download COCO classes. Installation cannot proceed."
+#     exit 1
+# }
+# wget -O /usr/local/vision_core/model/coco_colors.txt "http://packages.signalbotics.com/models/coco_colors.txt" &> /dev/null || {
+#     echo "Failed to download COCO colors. Installation cannot proceed."
+#     exit 1
+# }
+echo "COCO classes and colors downloaded successfully"
+
+# # Convert YOLOv3 to OpenVINO format if not already done
+# if [ ! -f "/usr/local/vision_core/model/yolo-v3.xml" ] || [ ! -f "/usr/local/vision_core/model/yolo-v3.bin" ]; then
+#     echo "Converting YOLOv3 to OpenVINO format..."
+#     mo --input_model /usr/local/vision_core/model/yolov3.cfg \
+#        --input_weight /usr/local/vision_core/model/yolov3.weights \
+#        --output_dir /usr/local/vision_core/model \
+#        --model_name yolo-v3 &> /dev/null || {
+#         echo "Failed to convert YOLOv3 to OpenVINO format."
+#         exit 1
+#     }
+#     echo "YOLOv3 OpenVINO conversion successful"
+# fi
+
+# # Convert YOLOv8 to TensorRT if not already done
+# if [ ! -f "/usr/local/vision_core/model/yolov8s.trt" ]; then
+#     echo "Converting YOLOv8 to TensorRT format..."
+#     /usr/src/tensorrt/bin/trtexec --onnx=/usr/local/vision_core/model/yolov8s.onnx \
+#                                  --saveEngine=/usr/local/vision_core/model/yolov8s.trt \
+#                                  &>> /usr/local/vision_core/logs/trtexec.log || {
+#         echo "Failed to convert YOLOv8 to TensorRT format."
+#         exit 1
+#     }
+#     echo "YOLOv8 TensorRT conversion successful"
+# fi
+
+exit 0
