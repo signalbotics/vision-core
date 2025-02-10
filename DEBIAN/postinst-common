@@ -1,7 +1,27 @@
 #!/bin/bash
+set -e
 
-# Create logs directory
-mkdir -p /usr/local/vision_core/logs
+# Create required directories with proper permissions
+mkdir -p /usr/local/vision_core/{bin,lib,include,models,logs,configs}
+chmod 755 /usr/local/vision_core
+chmod 755 /usr/local/vision_core/{bin,lib,include,models,logs,configs}
+
+# Set up environment variables
+cat > /etc/profile.d/vision_core.sh << EOF
+export VISION_CORE_HOME=/usr/local/vision_core
+export PATH=\$PATH:\$VISION_CORE_HOME/bin
+export LD_LIBRARY_PATH=\$LD_LIBRARY_PATH:\$VISION_CORE_HOME/lib
+EOF
+chmod 644 /etc/profile.d/vision_core.sh
+
+# Create log file with proper permissions
 touch /usr/local/vision_core/logs/trtexec.log
+chmod 644 /usr/local/vision_core/logs/trtexec.log
+
+# Verify installation
+if [ ! -d "/usr/local/vision_core" ]; then
+    echo "Error: Installation directory not created properly"
+    exit 1
+fi
 
 exit 0

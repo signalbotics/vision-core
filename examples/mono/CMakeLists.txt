@@ -7,6 +7,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(OpenCV REQUIRED)
 find_package(vision_core REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(sensor_msgs REQUIRED)
+find_package(message_filters REQUIRED)
+find_package(cv_bridge REQUIRED)
+
 find_package(PCL REQUIRED)
 if(vision_core_FOUND)
   message(STATUS "vision_core_INCLUDE_DIRS: ${vision_core_INCLUDE_DIRS}")

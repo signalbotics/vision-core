@@ -1,69 +1,110 @@
 #!/bin/bash
+set -e
 
-# Download and optimize stereo model
-MODEL_URL="http://packages.signalbotics.com/models/light_480x640.onnx"
-TEMP_MODEL_PATH="/tmp/light_480x640.onnx"
+MODEL_DIR="/usr/local/vision_core/models"
+VERSION_FILE="$MODEL_DIR/version.txt"
+SERVER_VERSION_URL="http://packages.signalbotics.com/models/version.txt"
 
-echo "Downloading the stereo model..."
-wget -O "$TEMP_MODEL_PATH" "$MODEL_URL" &> /dev/null || {
-    echo "Failed to download the stereo model. Installation cannot proceed."
-    exit 1
+# Check if models are already installed and up to date
+check_model_version() {
+    if [ ! -f "$VERSION_FILE" ]; then
+        return 1
+    fi
+    
+    LOCAL_VERSION=$(cat "$VERSION_FILE")
+    SERVER_VERSION=$(wget -qO- "$SERVER_VERSION_URL" || echo "0.0.0")
+    
+    if [ "$LOCAL_VERSION" = "$SERVER_VERSION" ] && \
+       [ -f "$MODEL_DIR/light_480x640.engine" ] && \
+       [ -f "$MODEL_DIR/light_mono.engine" ] && \
+       [ -f "$MODEL_DIR/medium_mono.engine" ]; then
+        echo "Models are up to date (version $LOCAL_VERSION)"
+        return 0
+    fi
+    return 1
 }
-echo "Stereo model downloaded successfully"
 
-# Download and optimize light mono model
-MODEL_URL="http://packages.signalbotics.com/models/light_mono.onnx"
-TEMP_MODEL_PATH="/tmp/light_mono.onnx"
-
-echo "Downloading the light monocular depth model..."
-wget -O "$TEMP_MODEL_PATH" "$MODEL_URL" &> /dev/null || {
-    echo "Failed to download the light mono model. Installation cannot proceed."
-    exit 1
+# Download and optimize a single model
+process_model() {
+    local MODEL_NAME=$1
+    local MODEL_URL="http://packages.signalbotics.com/models/${MODEL_NAME}.onnx"
+    local TEMP_PATH="/tmp/${MODEL_NAME}.onnx"
+    local ENGINE_PATH="$MODEL_DIR/${MODEL_NAME}.engine"
+    local MEMORY_MB=$(free -m | awk '/^Mem:/{print $2}')
+    local WORKSPACE_SIZE=4096
+    
+    # Adjust workspace size based on available memory
+    if [ $MEMORY_MB -gt 16000 ]; then
+        WORKSPACE_SIZE=8192
+    elif [ $MEMORY_MB -lt 8000 ]; then
+        WORKSPACE_SIZE=2048
+    fi
+    
+    echo "Processing $MODEL_NAME..."
+    
+    # Download model if needed
+    if [ ! -f "$ENGINE_PATH" ]; then
+        echo "Downloading ${MODEL_NAME}..."
+        if ! wget -q -O "$TEMP_PATH" "$MODEL_URL"; then
+            echo "Failed to download ${MODEL_NAME}"
+            return 1
+        fi
+        
+        # Optimize model
+        echo "Optimizing ${MODEL_NAME}..."
+        # Clear page cache to ensure maximum available memory
+        sync && echo 3 > /proc/sys/vm/drop_caches || true
+        
+        if ! /usr/src/tensorrt/bin/trtexec --onnx="$TEMP_PATH" \
+                                          --saveEngine="$ENGINE_PATH" \
+                                          --verbose=false \
+                                          --workspace=$WORKSPACE_SIZE \
+                                          --memPoolSize=1024 \
+                                          --tacticSources=+CUDNN,-CUBLAS,-CUBLAS_LT \
+                                          &>> "$MODEL_DIR/optimization.log"; then
+            echo "Failed to optimize ${MODEL_NAME}"
+            echo "Check $MODEL_DIR/optimization.log for details"
+            rm -f "$TEMP_PATH"
+            return 1
+        fi
+        rm -f "$TEMP_PATH"
+    fi
+    return 0
 }
-echo "Light mono model downloaded successfully"
 
-# Download and optimize medium mono model
-MODEL_URL="http://packages.signalbotics.com/models/medium_mono.onnx"
-TEMP_MODEL_PATH="/tmp/medium_mono.onnx"
-
-echo "Downloading the medium monocular depth model..."
-wget -O "$TEMP_MODEL_PATH" "$MODEL_URL" &> /dev/null || {
-    echo "Failed to download the medium mono model. Installation cannot proceed."
-    exit 1
+# Main installation logic
+main() {
+    # Ensure we have enough memory
+    TOTAL_MEM=$(free -m | awk '/^Mem:/{print $2}')
+    if [ $TOTAL_MEM -lt 4000 ]; then
+        echo "Error: Insufficient memory. Need at least 4GB RAM for model optimization."
+        exit 1
+    fi
+    
+    # Check if models are already installed and up to date
+    if check_model_version; then
+        exit 0
+    fi
+    
+    # Create model directory if it doesn't exist
+    mkdir -p "$MODEL_DIR"
+    
+    # Process each model
+    MODELS=("light_480x640" "light_mono" "medium_mono")
+    for model in "${MODELS[@]}"; do
+        if ! process_model "$model"; then
+            echo "Failed to process $model"
+            exit 1
+        fi
+    done
+    
+    # Update version file
+    wget -qO "$VERSION_FILE" "$SERVER_VERSION_URL"
+    
+    echo "All models processed successfully"
 }
-echo "Medium mono model downloaded successfully"
 
-# Optimize models for the current architecture
-DEVICE_ARCH=$(uname -m)
-
-echo "Optimizing the stereo model for $DEVICE_ARCH..."
-/usr/src/tensorrt/bin/trtexec --onnx=/tmp/light_480x640.onnx --saveEngine=/usr/local/vision_core/models/light_480x640.engine &>> /usr/local/vision_core/logs/trtexec.log
-if [ $? -eq 0 ]; then
-    echo "Stereo model optimized successfully."
-else
-    echo "Failed to optimize stereo model."
-    exit 1
-fi
-
-echo "Optimizing the light monocular depth model for $DEVICE_ARCH..."
-/usr/src/tensorrt/bin/trtexec --onnx=/tmp/light_mono.onnx --saveEngine=/usr/local/vision_core/models/light_mono.engine &>> /usr/local/vision_core/logs/trtexec.log
-if [ $? -eq 0 ]; then
-    echo "Light mono model optimized successfully."
-else
-    echo "Failed to optimize light mono model."
-    exit 1
-fi
-
-echo "Optimizing the medium monocular depth model for $DEVICE_ARCH..."
-/usr/src/tensorrt/bin/trtexec --onnx=/tmp/medium_mono.onnx --saveEngine=/usr/local/vision_core/models/medium_mono.engine &>> /usr/local/vision_core/logs/trtexec.log
-if [ $? -eq 0 ]; then
-    echo "Medium mono model optimized successfully."
-else
-    echo "Failed to optimize medium mono model."
-    exit 1
-fi
-
-# Clean up temporary files
-rm -f /tmp/light_480x640.onnx /tmp/light_mono.onnx /tmp/medium_mono.onnx
+# Run main installation
+main
 
 exit 0

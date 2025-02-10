@@ -6,6 +6,7 @@ set(CMAKE_CXX_STANDARD 17)
 option(BUILD_DETECT "Build detection module" OFF)
 option(BUILD_SEGMENT "Build segmentation module" OFF)
 option(BUILD_DEPTH "Build depth estimation modules (mono and stereo)" OFF)
+option(BUILD_FIRMWARE "Build firmware module" OFF)
 option(BUILD_ALL "Build all modules" OFF)
 
 # If BUILD_ALL is ON, enable all modules
@@ -13,6 +14,7 @@ if(BUILD_ALL)
     set(BUILD_DETECT ON)
     set(BUILD_SEGMENT ON)
     set(BUILD_DEPTH ON)
+    set(BUILD_FIRMWARE ON)
 endif()
 
 # Add modules based on build options
@@ -27,6 +29,10 @@ endif()
 if(BUILD_DEPTH)
     add_subdirectory("mono")
     add_subdirectory("stereo")
+endif()
+
+if(BUILD_FIRMWARE)
+    add_subdirectory("firmwares")
 endif()
 
 # Install common files

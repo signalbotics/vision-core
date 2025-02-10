@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Download segmentation model
-echo "Downloading segmentation model..."
+# echo "Downloading segmentation model..."
 
 # # Download ONNX model
 # wget -O /usr/local/vision_core/models/segment.onnx "http://packages.signalbotics.com/models/segment.onnx" &> /dev/null || {

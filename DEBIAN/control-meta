@@ -6,7 +6,7 @@ Standards-Version: 4.5.0
 Package: vision-core
 Architecture: all
 Version: 1.0
-Depends: vision-core-common (>= 1.0), vision-core-detect (>= 1.0), vision-core-segment (>= 1.0), vision-core-depth (>= 1.0)
+Depends: vision-core-common (>= 1.0), vision-core-detect (>= 1.0), vision-core-segment (>= 1.0), vision-core-depth (>= 1.0), vision-core-firmware (>= 1.0)
 Description: Vision Core Complete Package
  Meta package that installs all Vision Core modules including detection,
  segmentation, and depth estimation capabilities.

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Download YOLO models
-echo "Downloading YOLO models..."
+# echo "Downloading YOLO models..."
 
 # YOLOv3 weights
 # wget -O /usr/local/vision_core/model/yolov3.weights "http://packages.signalbotics.com/models/yolov3.weights" &> /dev/null || {
@@ -33,7 +33,7 @@ echo "Downloading YOLO models..."
 #     echo "Failed to download COCO colors. Installation cannot proceed."
 #     exit 1
 # }
-echo "COCO classes and colors downloaded successfully"
+# echo "COCO classes and colors downloaded successfully"
 
 # # Convert YOLOv3 to OpenVINO format if not already done
 # if [ ! -f "/usr/local/vision_core/model/yolo-v3.xml" ] || [ ! -f "/usr/local/vision_core/model/yolo-v3.bin" ]; then
