@@ -1,7 +1,8 @@
 ﻿cmake_minimum_required(VERSION 3.8)
 project(vision_core)
 set(CMAKE_CXX_STANDARD 17)
-
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 # Build options for each module
 option(BUILD_DETECT "Build detection module" OFF)
 option(BUILD_SEGMENT "Build segmentation module" OFF)

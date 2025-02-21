@@ -51,7 +51,7 @@ void stereo(int argc, char **argv)
         stereo_calibration_path = "nreal_calib_params.yml";
     } else {
         std::cout << "Using default calibration" << std::endl;
-        stereo_calibration_path = "StereoCalibration.yml";
+        stereo_calibration_path = "stereo_calibration.yml";
     }
 
     // pointcloud publisher
@@ -217,7 +217,7 @@ void stereo(int argc, char **argv)
     void * stereo=vision_core::Initialize(stereo_calibration_path);
 
     //x,y,z,r,g,b
-    float*pointcloud=new float[640*480*6];
+    float* pointcloud=new float[640*480*6];
 
     int device_id = argc > 2 ? std::stoi(argv[2]) : 0;
     int device_rgb_id = argc > 3 ? std::stoi(argv[3]) : 2;

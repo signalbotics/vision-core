@@ -214,7 +214,7 @@ void stereo(int argc, char **argv)
     cv::Mat frame, heat_map, depth_map, disparity, rgb, smoothedFrame;
     
     //init
-    void * stereo=Initialize(stereo_calibration_path);
+    void * stereo = vision_core::Initialize(stereo_calibration_path);
 
     //x,y,z,r,g,b
     float*pointcloud=new float[640*480*6];
@@ -264,7 +264,7 @@ void stereo(int argc, char **argv)
         cv::resize(imageL, imageL, cv::Size(640, 480));
         cv::resize(imageR, imageR, cv::Size(640, 480));
         //need RectifyImage
-        getDisparity(stereo,imageL,imageR,pointcloud,disparity);
+        vision_core::getDisparity(stereo,imageL,imageR,pointcloud,disparity);
         
 
         
@@ -329,7 +329,7 @@ void stereo(int argc, char **argv)
 
     }
 
-    Release(stereo);
+    vision_core::Release(stereo);
     delete []pointcloud;
     pointcloud=nullptr;
 }
