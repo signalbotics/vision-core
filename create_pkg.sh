@@ -2,6 +2,8 @@
 
 # Define the root directory
 ROOT_DIR=$(pwd)
+VERSION_FILE="$ROOT_DIR/models/version.txt"
+MODEL_URL="root@packages.signalbotics.com:/var/www/packages/models/"
 ARCH=$(dpkg --print-architecture)
 
 # Function to sync models to server
@@ -11,8 +13,6 @@ sync_models() {
     # Create models directory on server if it doesn't exist
     ssh root@packages.signalbotics.com "mkdir -p /var/www/packages/models"
     
-    # Read current version from version file or create if doesn't exist
-    VERSION_FILE="$ROOT_DIR/models/version.txt"
     if [ ! -f "$VERSION_FILE" ]; then
         echo "1.0.0" > "$VERSION_FILE"
     fi
@@ -30,20 +30,20 @@ sync_models() {
     case $1 in
         "detect")
             echo "Uploading detection models..."
-            rsync -a -P "$ROOT_DIR/model/yolov8s.onnx" root@packages.signalbotics.com:/var/www/packages/models/
-            rsync -a -P "$ROOT_DIR/model/coco_classes.txt" root@packages.signalbotics.com:/var/www/packages/models/
-            rsync -a -P "$ROOT_DIR/model/coco_colors.txt" root@packages.signalbotics.com:/var/www/packages/models/
-            rsync -a -P "$VERSION_FILE" root@packages.signalbotics.com:/var/www/packages/models/
+            rsync -a -P "$ROOT_DIR/model/yolov8s.onnx" $MODEL_URL
+            rsync -a -P "$ROOT_DIR/model/coco_classes.txt" $MODEL_URL
+            rsync -a -P "$ROOT_DIR/model/coco_colors.txt" $MODEL_URL
+            rsync -a -P "$VERSION_FILE" $MODEL_URL
             ;;
         "depth")
             echo "Uploading depth models..."
-            rsync -a -P "$ROOT_DIR/models/light_mono.onnx" root@packages.signalbotics.com:/var/www/packages/models/
-            rsync -a -P "$ROOT_DIR/models/medium_mono.onnx" root@packages.signalbotics.com:/var/www/packages/models/
-            rsync -a -P "$ROOT_DIR/models/light_480x640.onnx" root@packages.signalbotics.com:/var/www/packages/models/
+            rsync -a -P "$ROOT_DIR/models/light_mono.onnx" $MODEL_URL
+            rsync -a -P "$ROOT_DIR/models/medium_mono.onnx" $MODEL_URL
+            rsync -a -P "$ROOT_DIR/models/light_480x640.onnx" $MODEL_URL
             ;;
         "segment")
             echo "Uploading segmentation models..."
-            rsync -a -P "$ROOT_DIR/models/segment.onnx" root@packages.signalbotics.com:/var/www/packages/models/
+            rsync -a -P "$ROOT_DIR/models/segment.onnx" $MODEL_URL
             ;;
         *)
             ;;
@@ -231,14 +231,6 @@ while [[ $# -gt 0 ]]; do
             shift
             ;;
         --detect)
-            # Sync detection models
-            echo "Syncing detection models..."
-            # ssh root@packages.signalbotics.com "mkdir -p /var/www/packages/models"
-            # rsync -a -P "$ROOT_DIR/model/yolov3.weights" root@packages.signalbotics.com:/var/www/packages/models/
-            # rsync -a -P "$ROOT_DIR/model/yolov3.cfg" root@packages.signalbotics.com:/var/www/packages/models/
-            # rsync -a -P "$ROOT_DIR/model/yolov8s.pt" root@64.52.108.220:/var/www/packages/models/
-            # rsync -a -P "$ROOT_DIR/model/coco_classes.txt" root@64.52.108.220:/var/www/packages/models/
-            # rsync -a -P "$ROOT_DIR/model/coco_colors.txt" root@64.52.108.220:/var/www/packages/models/
             
             # Ensure common package is installed first
             if ! dpkg -l | grep -q "^ii.*vision-core-common"; then
@@ -250,10 +242,6 @@ while [[ $# -gt 0 ]]; do
             shift
             ;;
         --segment)
-            # Sync segmentation model
-            echo "Syncing segmentation model..."
-            # ssh root@packages.signalbotics.com "mkdir -p /var/www/packages/models"
-            # rsync -a -P "$ROOT_DIR/models/segment.onnx" root@64.52.108.220:/var/www/packages/models/
             
             # Ensure common package is installed first
             if ! dpkg -l | grep -q "^ii.*vision-core-common"; then
@@ -265,12 +253,6 @@ while [[ $# -gt 0 ]]; do
             shift
             ;;
         --depth)
-            # Sync depth models
-            echo "Syncing depth models..."
-            # ssh root@packages.signalbotics.com "mkdir -p /var/www/packages/models"
-            # rsync -a -P "$ROOT_DIR/models/light_mono.onnx" root@64.52.108.220:/var/www/packages/models/
-            # rsync -a -P "$ROOT_DIR/models/medium_mono.onnx" root@64.52.108.220:/var/www/packages/models/
-            # rsync -a -P "$ROOT_DIR/models/light_480x640.onnx" root@64.52.108.220:/var/www/packages/models/
             
             # Ensure common package is installed first
             if ! dpkg -l | grep -q "^ii.*vision-core-common"; then

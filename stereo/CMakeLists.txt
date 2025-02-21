@@ -9,6 +9,7 @@ SET(LIBRARY_OUTPUT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/lib)
 find_package(OpenCV REQUIRED)
 find_package(CUDA REQUIRED)
 
+set(TENSORRT_ROOT "/usr/src/tensorrt")
 # Find TensorRT
 find_path(TENSORRT_INCLUDE_DIR NvInfer.h HINTS ${TENSORRT_ROOT}/include)
 find_library(TENSORRT_LIB nvinfer HINTS ${TENSORRT_ROOT}/lib)
@@ -42,7 +43,7 @@ target_link_libraries(${PROJECT_NAME}
     ${OpenCV_LIBS} 
     ${TENSORRT_LIB} 
     ${NVINFER_PLUGIN_LIB} 
-    ${NVPARSERS_LIB} 
+    # ${NVPARSERS_LIB} 
     ${NVONNXPARSER_LIB}
     ${CUDA_LIBRARIES}
 )

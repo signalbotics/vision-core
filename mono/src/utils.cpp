@@ -1,4 +1,4 @@
-#include "utils.h"
+#include "utils.hpp"
 
 std::tuple<cv::Mat, int, int> resize_depth(cv::Mat& img, int w, int h)
 {

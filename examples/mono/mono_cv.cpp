@@ -1,4 +1,3 @@
-
 #include <opencv2/opencv.hpp>
 #include <cmath>
 #include "vision_core/mono_depth.hpp"
@@ -15,24 +14,22 @@ float cx = 611.0380249023438, cy = 402.2382507324219, fx = 749.0894775390625, fy
 
 
 
-MonoDepth depth_model;
-
 int main(int argc, char **argv) {
+    // Create MonoDepth instance here instead of globally
+    MonoDepth depth_model;
 
     std::cout << "Loading model from " << "depth_anything_vits14.engine" << "..." << std::endl;
     cv::Mat frame, result_d,depth;
     cv::Mat point_cloud;
 
-    cv::VideoCapture cap(2);
+    cv::VideoCapture cap(0);
     // Main Loop
     while (cap.isOpened()) {     
 
       cap >> frame;
 
-      auto pred = depth_model.predict(frame);
+      depth = depth_model.predict(frame);
 
-      result_d = pred.first;
-      depth = pred.second;
       point_cloud = cv::Mat::zeros(frame.size(), CV_32FC3);
       for (int i = 0; i < depth.rows; i++) {
           for (int j = 0; j < depth.cols; j++) {
@@ -43,7 +40,8 @@ int main(int argc, char **argv) {
                                                   );
           }
       }
-      cv::imshow("depth", result_d);
+      cv::imshow("depth", depth);
+    //   cv::imshow("frame", frame);
             // Check for ESC key press or ctrl + c
       if (cv::waitKey(5) == 27) // Exit loop when 'Esc' key (ASCII code 27) is pressed
           break;

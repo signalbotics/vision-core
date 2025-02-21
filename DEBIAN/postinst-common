@@ -14,9 +14,6 @@ export LD_LIBRARY_PATH=\$LD_LIBRARY_PATH:\$VISION_CORE_HOME/lib
 EOF
 chmod 644 /etc/profile.d/vision_core.sh
 
-# Create log file with proper permissions
-touch /usr/local/vision_core/logs/trtexec.log
-chmod 644 /usr/local/vision_core/logs/trtexec.log
 
 # Verify installation
 if [ ! -d "/usr/local/vision_core" ]; then

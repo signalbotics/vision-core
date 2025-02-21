@@ -51,7 +51,7 @@ int StereoAlgorithm::Initialize(char* model_path,int gpu_id,char*calibration_pat
         return -1;
    }
    initflag=0;
-   std::cout<<"init successed!"<<std::endl;
+   std::cout<<"vision_core::stereoDepth Intialized"<<std::endl;
    return 0;
   
 }

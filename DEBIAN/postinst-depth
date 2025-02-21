@@ -57,10 +57,6 @@ process_model() {
         
         if ! /usr/src/tensorrt/bin/trtexec --onnx="$TEMP_PATH" \
                                           --saveEngine="$ENGINE_PATH" \
-                                          --verbose=false \
-                                          --workspace=$WORKSPACE_SIZE \
-                                          --memPoolSize=1024 \
-                                          --tacticSources=+CUDNN,-CUBLAS,-CUBLAS_LT \
                                           &>> "$MODEL_DIR/optimization.log"; then
             echo "Failed to optimize ${MODEL_NAME}"
             echo "Check $MODEL_DIR/optimization.log for details"

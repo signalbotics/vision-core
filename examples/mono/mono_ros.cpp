@@ -215,9 +215,8 @@ void stereoCallback(const sensor_msgs::msg::Image::ConstSharedPtr image_l, const
     cv::Mat right_image = cv_bridge::toCvCopy(image_r, "bgr8")->image;
     auto start_time = std::chrono::high_resolution_clock::now();
     cv::Mat depth_l, depth_r, color_l, color_r;
-    auto pred = depth_model.predict(left_image);
-    color_l = pred.first;
-    // depth_l = pred.second /1.5;
+    depth_l = depth_model.predict(left_image);
+
     auto end_time = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time);
     std::cout << "Time taken to predict depth: " << duration.count() << "ms" << std::endl;
@@ -449,10 +448,8 @@ int main(int argc, char **argv) {
 
             cap >> frame;
 
-            auto pred = depth_model.predict(frame);
+            depth = depth_model.predict(frame);
             
-            result_d = pred.first;
-            depth = pred.second;
             point_cloud = cv::Mat::zeros(frame.size(), CV_32FC3);
             pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>);
             cloud->width = point_cloud.cols;
@@ -479,7 +476,7 @@ int main(int argc, char **argv) {
                 }
             }
 
-            cv::imshow("depth", result_d);
+            cv::imshow("depth", depth);
             // Check for ESC key press or ctrl + c
             if (cv::waitKey(5) == 27) // Exit loop when 'Esc' key (ASCII code 27) is pressed
                 break;
